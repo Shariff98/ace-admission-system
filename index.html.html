@@ -1,0 +1,2939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ACE Admission Management System</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+    }
+
+    header {
+        background: #123c69;
+        color: white;
+        padding: 18px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 22px;
+    }
+
+    header p {
+        margin: 4px 0 0;
+        font-size: 13px;
+        opacity: 0.9;
+    }
+
+    .container {
+        max-width: 1450px;
+        margin: 25px auto;
+        padding: 0 20px 40px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 10px;
+        padding: 22px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        margin-top: 0;
+        color: #123c69;
+    }
+
+    h3 {
+        color: #123c69;
+        margin-top: 0;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 6px;
+        padding: 11px 18px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        margin: 3px;
+    }
+
+    .btn-primary {
+        background: #1769aa;
+        color: white;
+    }
+
+    .btn-success {
+        background: #198754;
+        color: white;
+    }
+
+    .btn-warning {
+        background: #f0ad4e;
+        color: #222;
+    }
+
+    .btn-danger {
+        background: #c0392b;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-light {
+        background: #e9eef5;
+        color: #1f2937;
+    }
+
+    .btn:hover {
+        opacity: 0.9;
+    }
+
+    .dashboard-actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-actions button {
+        min-width: 200px;
+        padding: 16px;
+        font-size: 15px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 14px;
+        background: white;
+    }
+
+    textarea {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #1769aa;
+        box-shadow: 0 0 0 2px rgba(23,105,170,0.12);
+    }
+
+    .required {
+        color: #c0392b;
+    }
+
+    .student-header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-left: 5px solid #1769aa;
+    }
+
+    .student-summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .summary-item {
+        background: #f6f8fb;
+        border-radius: 6px;
+        padding: 10px;
+    }
+
+    .summary-item strong {
+        display: block;
+        color: #123c69;
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+
+    .milestone-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .milestone {
+        border: 2px solid #d7dee8;
+        background: white;
+        border-radius: 8px;
+        padding: 14px 10px;
+        cursor: pointer;
+        text-align: left;
+        min-height: 95px;
+    }
+
+    .milestone:hover {
+        border-color: #1769aa;
+    }
+
+    .milestone-number {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .milestone-title {
+        display: block;
+        font-weight: bold;
+        margin: 5px 0 8px;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    .status-not-started {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #7a5700;
+    }
+
+    .status-complete {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .status-blocked {
+        background: #f8d7da;
+        color: #842029;
+    }
+
+    .status-closed {
+        background: #e2e3e5;
+        color: #41464b;
+    }
+
+    .message {
+        border-radius: 7px;
+        padding: 12px;
+        margin: 15px 0;
+        font-size: 14px;
+    }
+
+    .message-info {
+        background: #e7f3ff;
+        border-left: 4px solid #1769aa;
+    }
+
+    .message-warning {
+        background: #fff3cd;
+        border-left: 4px solid #f0ad4e;
+    }
+
+    .message-error {
+        background: #f8d7da;
+        border-left: 4px solid #c0392b;
+    }
+
+    .message-success {
+        background: #d1e7dd;
+        border-left: 4px solid #198754;
+    }
+
+    .document-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 12px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+
+    .section-actions {
+        margin-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 15px;
+    }
+
+    .search-results {
+        margin-top: 20px;
+    }
+
+    .student-result {
+        border: 1px solid #dbe2ea;
+        padding: 15px;
+        border-radius: 7px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+    .student-result:hover {
+        background: #f5f9ff;
+        border-color: #1769aa;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border-bottom: 1px solid #e5e7eb;
+        padding: 10px;
+        text-align: left;
+        font-size: 13px;
+    }
+
+    th {
+        background: #eef3f8;
+        color: #123c69;
+    }
+
+    .top-buttons {
+        margin-bottom: 15px;
+    }
+
+    @media(max-width: 1000px) {
+        .milestone-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .student-summary {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media(max-width: 700px) {
+        .form-grid,
+        .student-summary,
+        .milestone-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>ACE Admission Management System</h1>
+        <p>Admission Workflow & Milestone Tracker</p>
+    </div>
+
+    <div>
+        Academic Support
+    </div>
+</header>
+
+<div class="container">
+
+<!-- =========================================================
+     DASHBOARD
+========================================================= -->
+
+<div id="dashboard">
+
+    <div class="card">
+	<h2>Admission Dashboard</h2>
+        <p>
+            Create a new admission application or search for an
+            existing student to continue the admission process.
+        </p>
+
+        <div class="dashboard-actions">
+            <button class="btn btn-primary" onclick="startNewApplication()">
+                + New Application
+
+            <button class="btn btn-secondary" onclick="showSearch()">
+                Search Existing Student
+            </button>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     SEARCH
+========================================================= -->
+
+<div id="searchScreen" class="hidden">
+
+    <div class="card">
+
+        <div class="top-buttons">
+            <button class="btn btn-light" onclick="goDashboard()">
+                ← Dashboard
+            </button>
+        </div>
+
+        <h2>Search Existing Student</h2>
+
+        <div class="form-grid">
+
+            <div class="form-group full-width">
+                <label>
+                    Search by Student ID / Name / FIN / Passport /
+                    SOLAR / Course / Agent
+                </label>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Enter search details..."
+                    oninput="searchStudents()"
+                >
+            </div>
+
+        </div>
+
+        <div id="searchResults" class="search-results"></div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     STUDENT RECORD
+========================================================= -->
+
+<div id="studentRecord" class="hidden">
+
+    <div class="top-buttons">
+        <button class="btn btn-light" onclick="goDashboard()">
+            ← Dashboard
+        </button>
+
+        <button class="btn btn-secondary" onclick="showSearch()">
+            Search Student
+        </button>
+
+        <button class="btn btn-primary" onclick="showTimeline()">
+            View Full Timeline
+        </button>
+    </div>
+
+
+    <!-- STUDENT HEADER -->
+
+    <div class="card student-header">
+
+        <h3>Student Admission Record</h3>
+
+        <div class="student-summary">
+
+            <div class="summary-item">
+                <strong>Student ID / ACEID</strong>
+                <span id="headerStudentID">Not Created</span>
+            </div>
+
+            <div class="summary-item">
+                <strong>Full Name</strong>
+                <span id="headerName">-</span>
+            </div>
+
+            <div class="summary-item">
+                <strong>FIN / NRIC / Passport</strong>
+                <span id="headerIdentification">-</span>
+            </div>
+
+            <div class="summary-item">
+                <strong>Course</strong>
+                <span id="headerCourse">-</span>
+            </div>
+
+            <div class="summary-item">
+                <strong>Application Source</strong>
+                <span id="headerSource">-</span>
+            </div>
+
+            <div class="summary-item">
+                <strong>SOLAR Number</strong>
+                <span id="headerSolar">Not Created</span>
+            </div>
+
+            <div class="summary-item">
+                <strong>Current Milestone</strong>
+                <span id="headerMilestone">Application</span>
+            </div>
+
+            <div class="summary-item">
+                <strong>Overall Status</strong>
+                <span id="headerOverallStatus">Active</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MILESTONES -->
+
+    <div class="card">
+
+        <h2>Admission Progress</h2>
+
+        <div class="milestone-grid">
+
+            <button class="milestone" onclick="openMilestone(1)">
+                <span class="milestone-number">Milestone 1</span>
+                <span class="milestone-title">Application</span>
+                <span id="status1" class="status status-pending">
+                    Current / Pending
+                </span>
+            </button>
+
+            <button class="milestone" onclick="openMilestone(2)">
+                <span class="milestone-number">Milestone 2</span>
+                <span class="milestone-title">Documents & Eligibility</span>
+                <span id="status2" class="status status-not-started">
+                    Not Started
+                </span>
+            </button>
+
+            <button class="milestone" onclick="openMilestone(3)">
+                <span class="milestone-number">Milestone 3</span>
+                <span class="milestone-title">Application Fee</span>
+                <span id="status3" class="status status-not-started">
+                    Not Started
+                </span>
+            </button>
+
+            <button class="milestone" onclick="openMilestone(4)">
+                <span class="milestone-number">Milestone 4</span>
+                <span class="milestone-title">Student Profile</span>
+                <span id="status4" class="status status-not-started">
+                    Not Started
+                </span>
+            </button>
+
+            <button class="milestone" onclick="openMilestone(5)">
+                <span class="milestone-number">Milestone 5</span>
+                <span class="milestone-title">Intake & Contract</span>
+                <span id="status5" class="status status-not-started">
+                    Not Started
+                </span>
+            </button>
+
+            <button class="milestone" onclick="openMilestone(6)">
+                <span class="milestone-number">Milestone 6</span>
+                <span class="milestone-title">SOLAR</span>
+                <span id="status6" class="status status-not-started">
+                    Not Started
+                </span>
+            </button>
+
+            <button class="milestone" onclick="openMilestone(7)">
+                <span class="milestone-number">Milestone 7</span>
+                <span class="milestone-title">e-Form</span>
+                <span id="status7" class="status status-not-started">
+                    Not Started
+                </span>
+            </button>
+
+            <button class="milestone" onclick="openMilestone(8)">
+                <span class="milestone-number">Milestone 8</span>
+                <span class="milestone-title">ICA Processing Fee</span>
+                <span id="status8" class="status status-not-started">
+                    Not Started
+                </span>
+            </button>
+
+            <button class="milestone" onclick="openMilestone(9)">
+                <span class="milestone-number">Milestone 9</span>
+                <span class="milestone-title">ICA / SOLAR Status</span>
+                <span id="status9" class="status status-not-started">
+                    Not Started
+                </span>
+            </button>
+
+            <button class="milestone" onclick="openMilestone(10)">
+                <span class="milestone-number">Milestone 10</span>
+                <span class="milestone-title">IPA & Pre-Reporting</span>
+                <span id="status10" class="status status-not-started">
+                    Not Started
+                </span>
+            </button>
+
+        </div>
+
+    </div>
+
+
+<!-- =========================================================
+     MILESTONE 1
+========================================================= -->
+
+<div id="milestone1" class="card milestone-section hidden">
+
+<h2>Milestone 1 – Application Received</h2>
+
+<div class="message message-info">
+    Record the student's initial application information.
+</div>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Full Name <span class="required">*</span></label>
+<input id="fullName" type="text">
+</div>
+
+<div class="form-group">
+<label>Course Applied For <span class="required">*</span></label>
+<input id="course" type="text">
+</div>
+
+<div class="form-group">
+<label>FIN / NRIC</label>
+<input id="fin" type="text">
+</div>
+
+<div class="form-group">
+<label>Passport Number</label>
+<input id="passport" type="text">
+</div>
+
+<div class="form-group">
+<label>Email</label>
+<input id="email" type="email">
+</div>
+
+<div class="form-group">
+<label>Contact Number</label>
+<input id="contact" type="text">
+</div>
+
+<div class="form-group">
+<label>Application Source <span class="required">*</span></label>
+
+<select id="applicationSource" onchange="sourceChanged()">
+<option value="">Select</option>
+<option value="Direct">Direct</option>
+<option value="Agent">Agent</option>
+</select>
+
+</div>
+
+<div id="agentSection" class="form-group hidden">
+<label>Agent Name <span class="required">*</span></label>
+<input id="agentName" type="text">
+</div>
+
+<div class="form-group">
+<label>Marketing Staff</label>
+<input id="marketingStaff" type="text">
+</div>
+
+<div class="form-group">
+<label>Application Received Date <span class="required">*</span></label>
+<input id="applicationDate" type="date">
+</div>
+
+<div class="form-group">
+<label>Application Received Time</label>
+<input id="applicationTime" type="time">
+</div>
+
+<div class="form-group full-width">
+<label>Remarks</label>
+<textarea id="applicationRemarks"></textarea>
+</div>
+
+</div>
+
+<div class="section-actions">
+
+<button class="btn btn-secondary" onclick="saveCurrentRecord()">
+Save
+</button>
+
+<button class="btn btn-success" onclick="completeApplication()">
+Save & Complete Application
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     MILESTONE 2
+========================================================= -->
+
+<div id="milestone2" class="card milestone-section hidden">
+
+<h2>Milestone 2 – Documents & Eligibility</h2>
+
+<div class="message message-info">
+    Mark each required admission document as Received,
+    Pending or Not Applicable.
+</div>
+
+<div class="document-row">
+<label>Passport Copy</label>
+
+<select id="docPassport">
+<option value="Pending">Pending</option>
+<option value="Received">Received</option>
+<option value="N/A">Not Applicable</option>
+</select>
+</div>
+
+<div class="document-row">
+<label>Passport Photograph</label>
+
+<select id="docPhoto">
+<option value="Pending">Pending</option>
+<option value="Received">Received</option>
+<option value="N/A">Not Applicable</option>
+</select>
+</div>
+
+<div class="document-row">
+<label>Education Certificate</label>
+
+<select id="docEducation">
+<option value="Pending">Pending</option>
+<option value="Received">Received</option>
+<option value="N/A">Not Applicable</option>
+</select>
+</div>
+
+<div class="document-row">
+<label>Education Transcript</label>
+
+<select id="docTranscript">
+<option value="Pending">Pending</option>
+<option value="Received">Received</option>
+<option value="N/A">Not Applicable</option>
+</select>
+</div>
+
+<div class="document-row">
+<label>Application Form</label>
+
+<select id="docApplication">
+<option value="Pending">Pending</option>
+<option value="Received">Received</option>
+<option value="N/A">Not Applicable</option>
+</select>
+</div>
+
+<hr>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Eligibility Status</label>
+
+<select id="eligibilityStatus">
+<option value="">Select</option>
+<option value="Under Review">Under Review</option>
+<option value="Eligible">Eligible</option>
+<option value="Not Eligible">Not Eligible</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Eligibility Decision Date</label>
+<input id="eligibilityDate" type="date">
+</div>
+
+<div class="form-group">
+<label>Written Offer / Eligibility Confirmation Issued?</label>
+
+<select id="writtenOffer">
+<option value="">Select</option>
+<option value="Yes">Yes</option>
+<option value="No">No</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Written Offer Date</label>
+<input id="writtenOfferDate" type="date">
+</div>
+
+<div class="form-group full-width">
+<label>Remarks</label>
+<textarea id="eligibilityRemarks"></textarea>
+</div>
+
+</div>
+
+<div class="section-actions">
+
+<button class="btn btn-secondary" onclick="saveCurrentRecord()">
+Save
+</button>
+
+<button class="btn btn-success" onclick="completeEligibility()">
+Save & Complete
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     MILESTONE 3
+========================================================= -->
+
+<div id="milestone3" class="card milestone-section hidden">
+
+<h2>Milestone 3 – S$109 Application Fee</h2>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Application Fee Status</label>
+
+<select id="applicationFeeStatus">
+<option value="Pending">Pending</option>
+<option value="Paid">Paid</option>
+<option value="Waived">Waived</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Amount</label>
+<input id="applicationFeeAmount" type="number" step="0.01" value="109">
+</div>
+
+<div class="form-group">
+<label>Payment Date</label>
+<input id="applicationFeeDate" type="date">
+</div>
+
+<div class="form-group">
+<label>Receipt / Reference Number</label>
+<input id="applicationFeeReference" type="text">
+</div>
+
+<div class="form-group">
+<label>Verified By</label>
+<input id="applicationFeeVerifiedBy" type="text">
+</div>
+
+</div>
+
+<div class="section-actions">
+
+<button class="btn btn-secondary" onclick="saveCurrentRecord()">
+Save
+</button>
+
+<button class="btn btn-success" onclick="completeApplicationFee()">
+Save & Complete
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     MILESTONE 4
+========================================================= -->
+
+<div id="milestone4" class="card milestone-section hidden">
+
+<h2>Milestone 4 – Student Profile / Student ID</h2>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Student ID / ACEID <span class="required">*</span></label>
+<input id="studentID" type="text">
+</div>
+
+<div class="form-group">
+<label>Student ID Created Date</label>
+<input id="studentIDDate" type="date">
+</div>
+
+<div class="form-group">
+<label>Created By</label>
+<input id="studentIDCreatedBy" type="text">
+</div>
+
+</div>
+
+<div class="section-actions">
+
+<button class="btn btn-secondary" onclick="saveCurrentRecord()">
+Save
+</button>
+
+<button class="btn btn-success" onclick="completeStudentProfile()">
+Save & Complete
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     MILESTONE 5
+========================================================= -->
+
+<div id="milestone5" class="card milestone-section hidden">
+
+<h2>Milestone 5 – Intake / Offer Letter / Contract</h2>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Intake</label>
+<input id="intake" type="text">
+</div>
+
+<div class="form-group">
+<label>Intake Created Date</label>
+<input id="intakeDate" type="date">
+</div>
+
+<div class="form-group">
+<label>Offer Letter Status</label>
+
+<select id="offerLetterStatus">
+<option value="Pending">Pending</option>
+<option value="Sent">Sent</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Offer Letter Sent Date</label>
+<input id="offerLetterDate" type="date">
+</div>
+
+<div class="form-group">
+<label>Student Contract Signed?</label>
+
+<select id="contractStatus">
+<option value="No">No</option>
+<option value="Yes">Yes</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Contract Signed Date</label>
+<input id="contractSignedDate" type="date">
+</div>
+
+<div class="form-group full-width">
+<label>Document Reference / Path</label>
+<input id="contractReference" type="text">
+</div>
+
+</div>
+
+<div class="section-actions">
+
+<button class="btn btn-secondary" onclick="saveCurrentRecord()">
+Save
+</button>
+
+<button class="btn btn-success" onclick="completeContract()">
+Save & Complete
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     MILESTONE 6
+========================================================= -->
+
+<div id="milestone6" class="card milestone-section hidden">
+
+<h2>Milestone 6 – SOLAR Creation</h2>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>SOLAR Number <span class="required">*</span></label>
+<input id="solarNumber" type="text">
+</div>
+
+<div class="form-group">
+<label>SOLAR Created Date</label>
+<input id="solarCreatedDate" type="date">
+</div>
+
+<div class="form-group">
+<label>Created By</label>
+<input id="solarCreatedBy" type="text">
+</div>
+
+</div>
+
+<div class="section-actions">
+
+<button class="btn btn-secondary" onclick="saveCurrentRecord()">
+Save
+</button>
+
+<button class="btn btn-success" onclick="completeSolar()">
+Save & Complete
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     MILESTONE 7
+========================================================= -->
+
+<div id="milestone7" class="card milestone-section hidden">
+
+<h2>Milestone 7 – e-Form</h2>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Is e-Form Required?</label>
+
+<select id="eformRequired" onchange="eformChanged()">
+<option value="">Select</option>
+<option value="Yes">Yes</option>
+<option value="No">No</option>
+</select>
+
+</div>
+
+<div id="eformDetails" class="hidden full-width">
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>e-Form Status</label>
+
+<select id="eformStatus">
+<option value="Pending">Pending</option>
+<option value="Submitted">Submitted</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Submitted Date</label>
+<input id="eformSubmittedDate" type="date">
+</div>
+
+<div class="form-group">
+<label>Follow-up Owner</label>
+<input id="eformOwner" type="text">
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="section-actions">
+
+<button class="btn btn-secondary" onclick="saveCurrentRecord()">
+Save
+</button>
+
+<button class="btn btn-success" onclick="completeEform()">
+Save & Complete
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     MILESTONE 8
+========================================================= -->
+
+<div id="milestone8" class="card milestone-section hidden">
+
+<h2>Milestone 8 – ICA Processing Fee</h2>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Processing Fee Status</label>
+
+<select id="processingFeeStatus">
+<option value="Pending">Pending</option>
+<option value="Paid">Paid</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Payment Date</label>
+<input id="processingFeeDate" type="date">
+</div>
+
+<div class="form-group">
+<label>Payment Reference</label>
+<input id="processingFeeReference" type="text">
+</div>
+
+<div class="form-group">
+<label>Verified By</label>
+<input id="processingFeeVerifiedBy" type="text">
+</div>
+
+</div>
+
+<div class="section-actions">
+
+<button class="btn btn-secondary" onclick="saveCurrentRecord()">
+Save
+</button>
+
+<button class="btn btn-success" onclick="completeProcessingFee()">
+Save & Complete
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     MILESTONE 9
+========================================================= -->
+
+<div id="milestone9" class="card milestone-section hidden">
+
+<h2>Milestone 9 – SOLAR / ICA Status Tracking</h2>
+
+<div class="message message-info">
+    Every status change should be retained in the status history.
+</div>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Current SOLAR / ICA Status</label>
+
+<select id="icaStatus">
+<option value="">Select</option>
+<option value="Created">Created</option>
+<option value="e-Form Pending">e-Form Pending</option>
+<option value="e-Form Submitted">e-Form Submitted</option>
+<option value="Processing Fee Pending">Processing Fee Pending</option>
+<option value="Submitted / Processing">Submitted / Processing</option>
+<option value="Clarification Requested">Clarification Requested</option>
+<option value="Clarification Submitted">Clarification Submitted</option>
+<option value="IPA Approved">IPA Approved</option>
+<option value="Rejected">Rejected</option>
+<option value="Withdrawn / Closed">Withdrawn / Closed</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Effective Date</label>
+<input id="icaStatusDate" type="date">
+</div>
+
+<div class="form-group">
+<label>Updated By</label>
+<input id="icaUpdatedBy" type="text">
+</div>
+
+<div class="form-group full-width">
+<label>Status Remarks</label>
+<textarea id="icaRemarks"></textarea>
+</div>
+
+</div>
+
+<div class="section-actions">
+
+<button class="btn btn-primary" onclick="updateICAStatus()">
+Save Status Update
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     MILESTONE 10
+========================================================= -->
+
+<div id="milestone10" class="card milestone-section hidden">
+
+<h2>Milestone 10 – IPA Approved / Pre-Reporting</h2>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>IPA Status</label>
+
+<select id="ipaStatus" onchange="ipaChanged()">
+<option value="Pending">Pending</option>
+<option value="Approved">IPA Approved</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>IPA Approval Date</label>
+<input id="ipaApprovalDate" type="date">
+</div>
+
+</div>
+
+<div id="ipaPaymentSection" class="hidden">
+
+<hr>
+
+<h3>Pre-Reporting Payments</h3>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>First Course Fee Status</label>
+
+<select id="firstCourseFeeStatus">
+<option value="Pending">Pending</option>
+<option value="Paid">Paid</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>First Course Fee Amount</label>
+<input id="firstCourseFeeAmount" type="number" step="0.01">
+</div>
+
+<div class="form-group">
+<label>First Course Fee Date</label>
+<input id="firstCourseFeeDate" type="date">
+</div>
+
+<div class="form-group">
+<label>First Course Fee Reference</label>
+<input id="firstCourseFeeReference" type="text">
+</div>
+
+<div class="form-group">
+<label>ICA Issuance Fee Status</label>
+
+<select id="issuanceFeeStatus">
+<option value="Pending">Pending</option>
+<option value="Paid">Paid</option>
+</select>
+
+</div>
+
+<div class="form-group">
+<label>ICA Issuance Fee Date</label>
+<input id="issuanceFeeDate" type="date">
+</div>
+
+<div class="form-group">
+<label>ICA Issuance Fee Reference</label>
+<input id="issuanceFeeReference" type="text">
+</div>
+
+</div>
+
+</div>
+
+<div class="section-actions">
+
+<button class="btn btn-secondary" onclick="saveCurrentRecord()">
+Save
+</button>
+
+<button class="btn btn-success" onclick="completePreReporting()">
+Mark Ready for Reporting
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     TIMELINE
+========================================================= -->
+
+<div id="timelineSection" class="card hidden">
+
+<h2>Admission Timeline</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Date / Time</th>
+<th>Milestone</th>
+<th>Previous Status</th>
+<th>New Status</th>
+<th>Updated By</th>
+<th>Remarks</th>
+</tr>
+</thead>
+
+<tbody id="timelineBody">
+</tbody>
+
+</table>
+
+<br>
+
+<button class="btn btn-secondary" onclick="hideTimeline()">
+Close Timeline
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   STORAGE
+========================================================= */
+
+let currentRecord = null;
+
+function getRecords() {
+    return JSON.parse(localStorage.getItem("ACEAdmissionRecords") || "[]");
+}
+
+function saveRecords(records) {
+    localStorage.setItem("ACEAdmissionRecords", JSON.stringify(records));
+}
+
+function generateRecordID() {
+    return "ADM-" + Date.now();
+}
+
+
+/* =========================================================
+   SCREEN NAVIGATION
+========================================================= */
+
+function hideAllScreens() {
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("searchScreen").classList.add("hidden");
+    document.getElementById("studentRecord").classList.add("hidden");
+}
+
+function goDashboard() {
+    hideAllScreens();
+    document.getElementById("dashboard").classList.remove("hidden");
+}
+
+function showSearch() {
+    hideAllScreens();
+    document.getElementById("searchScreen").classList.remove("hidden");
+    searchStudents();
+}
+
+
+/* =========================================================
+   NEW APPLICATION
+========================================================= */
+
+function startNewApplication() {
+
+    currentRecord = {
+        recordID: generateRecordID(),
+        milestones: {},
+        history: [],
+        overallStatus: "Active"
+    };
+
+    for (let i = 1; i <= 10; i++) {
+        currentRecord.milestones[i] = "Not Started";
+    }
+
+    currentRecord.milestones[1] = "Current / Pending";
+
+    hideAllScreens();
+
+    document.getElementById("studentRecord").classList.remove("hidden");
+
+    clearForm();
+
+    updateHeader();
+    updateMilestones();
+
+    openMilestone(1);
+}
+
+
+/* =========================================================
+   FORM CONDITIONALS
+========================================================= */
+
+function sourceChanged() {
+
+    const source = document.getElementById("applicationSource").value;
+
+    if (source === "Agent") {
+        document.getElementById("agentSection").classList.remove("hidden");
+    } else {
+        document.getElementById("agentSection").classList.add("hidden");
+        document.getElementById("agentName").value = "";
+    }
+}
+
+
+function eformChanged() {
+
+    const required = document.getElementById("eformRequired").value;
+
+    if (required === "Yes") {
+        document.getElementById("eformDetails").classList.remove("hidden");
+    } else {
+        document.getElementById("eformDetails").classList.add("hidden");
+
+        if (required === "No") {
+            document.getElementById("eformStatus").value = "Pending";
+        }
+    }
+}
+
+
+function ipaChanged() {
+
+    const status = document.getElementById("ipaStatus").value;
+
+    if (status === "Approved") {
+        document.getElementById("ipaPaymentSection").classList.remove("hidden");
+    } else {
+        document.getElementById("ipaPaymentSection").classList.add("hidden");
+    }
+}
+
+
+/* =========================================================
+   OPEN MILESTONE
+========================================================= */
+
+function openMilestone(number) {
+
+    document.querySelectorAll(".milestone-section")
+        .forEach(section => section.classList.add("hidden"));
+
+    document.getElementById("timelineSection").classList.add("hidden");
+
+    const section = document.getElementById("milestone" + number);
+
+    section.classList.remove("hidden");
+
+    section.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+
+/* =========================================================
+   COMPLETE APPLICATION
+========================================================= */
+
+function completeApplication() {
+
+    const name = document.getElementById("fullName").value.trim();
+    const course = document.getElementById("course").value.trim();
+    const source = document.getElementById("applicationSource").value;
+    const date = document.getElementById("applicationDate").value;
+
+    if (!name || !course || !source || !date) {
+
+        alert(
+            "Please complete Full Name, Course, Application Source and Application Received Date."
+        );
+
+        return;
+    }
+
+    if (
+        source === "Agent" &&
+        !document.getElementById("agentName").value.trim()
+    ) {
+
+        alert(
+            "Agent Name is required because the application source is Agent."
+        );
+
+        return;
+    }
+
+    markComplete(1, "Application Completed");
+
+    openMilestone(2);
+}
+
+
+/* =========================================================
+   ELIGIBILITY
+========================================================= */
+
+function completeEligibility() {
+
+    if (currentRecord.milestones[1] !== "Complete") {
+
+        blocked(
+            "Application must be completed first.",
+            1
+        );
+
+        return;
+    }
+
+    const documents = [
+        document.getElementById("docPassport").value,
+        document.getElementById("docPhoto").value,
+        document.getElementById("docEducation").value,
+        document.getElementById("docTranscript").value,
+        document.getElementById("docApplication").value
+    ];
+
+    const outstanding =
+        documents.some(value => value === "Pending");
+
+    const eligibility =
+        document.getElementById("eligibilityStatus").value;
+
+    if (outstanding && eligibility === "Eligible") {
+
+        alert(
+            "This application cannot proceed to eligibility confirmation because mandatory documents are still outstanding."
+        );
+
+        return;
+    }
+
+    if (eligibility !== "Eligible") {
+
+        alert(
+            "Eligibility must be confirmed before proceeding."
+        );
+
+        return;
+    }
+
+    if (document.getElementById("writtenOffer").value !== "Yes") {
+
+        alert(
+            "Written eligibility / offer confirmation must be recorded before proceeding to the application fee."
+        );
+
+        return;
+    }
+
+    markComplete(2, "Eligibility Confirmed");
+
+    openMilestone(3);
+}
+
+
+/* =========================================================
+   APPLICATION FEE
+========================================================= */
+
+function completeApplicationFee() {
+
+    if (currentRecord.milestones[2] !== "Complete") {
+
+        blocked(
+            "Documents & Eligibility must be completed first.",
+            2
+        );
+
+        return;
+    }
+
+    const status =
+        document.getElementById("applicationFeeStatus").value;
+
+    if (status !== "Paid" && status !== "Waived") {
+
+        alert(
+            "Student profile creation is blocked until the S$109 application fee has been verified."
+        );
+
+        return;
+    }
+
+    markComplete(3, "Application Fee Verified");
+
+    openMilestone(4);
+}
+
+
+/* =========================================================
+   STUDENT PROFILE
+========================================================= */
+
+function completeStudentProfile() {
+
+    if (currentRecord.milestones[3] !== "Complete") {
+
+        blocked(
+            "Application Fee must be completed first.",
+            3
+        );
+
+        return;
+    }
+
+    const studentID =
+        document.getElementById("studentID").value.trim();
+
+    if (!studentID) {
+
+        alert(
+            "Please enter the generated Student ID before completing this milestone."
+        );
+
+        return;
+    }
+
+    markComplete(4, "Student ID Created");
+
+    openMilestone(5);
+}
+
+
+/* =========================================================
+   CONTRACT
+========================================================= */
+
+function completeContract() {
+
+    if (currentRecord.milestones[4] !== "Complete") {
+
+        blocked(
+            "Student Profile must be completed first.",
+            4
+        );
+
+        return;
+    }
+
+    if (
+        document.getElementById("contractStatus").value !== "Yes"
+    ) {
+
+        alert(
+            "The admission record cannot proceed to SOLAR until the Student Contract has been signed and recorded."
+        );
+
+        return;
+    }
+
+    if (
+        !document.getElementById("contractSignedDate").value
+    ) {
+
+        alert(
+            "Please enter the Student Contract Signed Date."
+        );
+
+        return;
+    }
+
+    markComplete(5, "Contract Signed");
+
+    openMilestone(6);
+}
+
+
+/* =========================================================
+   SOLAR
+========================================================= */
+
+function completeSolar() {
+
+    if (currentRecord.milestones[5] !== "Complete") {
+
+        blocked(
+            "SOLAR cannot be marked as created because the Student Contract has not been recorded as signed.",
+            5
+        );
+
+        return;
+    }
+
+    const solar =
+        document.getElementById("solarNumber").value.trim();
+
+    if (!solar) {
+
+        alert(
+            "A SOLAR Number is required before this milestone can be marked complete."
+        );
+
+        return;
+    }
+
+    markComplete(6, "SOLAR Created");
+
+    openMilestone(7);
+}
+
+
+/* =========================================================
+   EFORM
+========================================================= */
+
+function completeEform() {
+
+    if (currentRecord.milestones[6] !== "Complete") {
+
+        blocked(
+            "SOLAR must be created first.",
+            6
+        );
+
+        return;
+    }
+
+    const required =
+        document.getElementById("eformRequired").value;
+
+    if (!required) {
+
+        alert("Please indicate whether e-Form is required.");
+
+        return;
+    }
+
+    if (required === "Yes") {
+
+        const status =
+            document.getElementById("eformStatus").value;
+
+        if (status !== "Submitted") {
+
+            alert(
+                "e-Form is required but has not yet been submitted. Keep this milestone Pending."
+            );
+
+            return;
+        }
+
+        if (
+            !document.getElementById("eformSubmittedDate").value
+        ) {
+
+            alert(
+                "Please enter the e-Form Submitted Date."
+            );
+
+            return;
+        }
+    }
+
+    markComplete(
+        7,
+        required === "No"
+            ? "e-Form Not Required / N/A"
+            : "e-Form Submitted"
+    );
+
+    openMilestone(8);
+}
+
+
+/* =========================================================
+   PROCESSING FEE
+========================================================= */
+
+function completeProcessingFee() {
+
+    if (currentRecord.milestones[7] !== "Complete") {
+
+        blocked(
+            "e-Form milestone must be completed first.",
+            7
+        );
+
+        return;
+    }
+
+    if (
+        document.getElementById("processingFeeStatus").value !== "Paid"
+    ) {
+
+        alert(
+            "ICA processing fee has not been recorded as paid. Keep the case in Pending Processing Fee."
+        );
+
+        return;
+    }
+
+    markComplete(8, "ICA Processing Fee Paid");
+
+    openMilestone(9);
+}
+
+
+/* =========================================================
+   ICA STATUS
+========================================================= */
+
+function updateICAStatus() {
+
+    if (currentRecord.milestones[8] !== "Complete") {
+
+        blocked(
+            "ICA Processing Fee must be completed first.",
+            8
+        );
+
+        return;
+    }
+
+    const status =
+        document.getElementById("icaStatus").value;
+
+    const effectiveDate =
+        document.getElementById("icaStatusDate").value;
+
+    if (!status) {
+
+        alert("Please select the current SOLAR / ICA status.");
+
+        return;
+    }
+
+    if (!effectiveDate) {
+
+        alert(
+            "Please enter the effective date for this SOLAR/ICA status change."
+        );
+
+        return;
+    }
+
+    const previousStatus =
+        currentRecord.icaStatus || "Not Set";
+
+    currentRecord.icaStatus = status;
+
+    addHistory(
+        "9. ICA / SOLAR Status",
+        previousStatus,
+        status,
+        document.getElementById("icaRemarks").value
+    );
+
+    if (status === "IPA Approved") {
+
+        currentRecord.milestones[9] = "Complete";
+
+        if (currentRecord.milestones[10] !== "Complete") {
+            currentRecord.milestones[10] = "Current / Pending";
+        }
+
+        document.getElementById("ipaStatus").value = "Approved";
+        document.getElementById("ipaPaymentSection")
+            .classList.remove("hidden");
+
+        saveCurrentRecord();
+
+        openMilestone(10);
+
+    } else if (
+        status === "Rejected" ||
+        status === "Withdrawn / Closed"
+    ) {
+
+        currentRecord.overallStatus =
+            status === "Rejected"
+                ? "Rejected"
+                : "Closed";
+
+        currentRecord.milestones[9] = "Closed";
+
+        saveCurrentRecord();
+
+    } else {
+
+        currentRecord.milestones[9] = "Current / Pending";
+
+        saveCurrentRecord();
+    }
+
+    updateHeader();
+    updateMilestones();
+
+    alert("SOLAR / ICA status updated successfully.");
+}
+
+
+/* =========================================================
+   PRE REPORTING
+========================================================= */
+
+function completePreReporting() {
+
+    if (currentRecord.icaStatus !== "IPA Approved") {
+
+        alert(
+            "IPA must be approved before the student can proceed to pre-reporting."
+        );
+
+        return;
+    }
+
+    if (
+        document.getElementById("firstCourseFeeStatus").value !== "Paid"
+    ) {
+
+        alert(
+            "First Course Fee is still outstanding."
+        );
+
+        return;
+    }
+
+    if (
+        document.getElementById("issuanceFeeStatus").value !== "Paid"
+    ) {
+
+        alert(
+            "ICA Issuance Fee is still outstanding."
+        );
+
+        return;
+    }
+
+    currentRecord.overallStatus = "Approved";
+
+    markComplete(
+        10,
+        "Ready for Reporting / Student Pass Issuance Process"
+    );
+
+    alert(
+        "Admission process completed.\n\nStudent is Ready for Reporting / Student Pass Issuance Process."
+    );
+}
+
+
+/* =========================================================
+   MARK COMPLETE
+========================================================= */
+
+function markComplete(number, remarks) {
+
+    const previous =
+        currentRecord.milestones[number];
+
+    currentRecord.milestones[number] = "Complete";
+
+    if (
+        number < 10 &&
+        currentRecord.milestones[number + 1] !== "Complete"
+    ) {
+
+        currentRecord.milestones[number + 1] =
+            "Current / Pending";
+    }
+
+    addHistory(
+        "Milestone " + number,
+        previous,
+        "Complete",
+        remarks
+    );
+
+    saveCurrentRecord();
+
+    updateHeader();
+    updateMilestones();
+}
+
+
+/* =========================================================
+   BLOCKING MESSAGE
+========================================================= */
+
+function blocked(message, milestone) {
+
+    const go =
+        confirm(
+            message +
+            "\n\nPress OK to go to the missing milestone."
+        );
+
+    if (go) {
+        openMilestone(milestone);
+    }
+}
+
+
+/* =========================================================
+   SAVE FORM DATA
+========================================================= */
+
+function saveCurrentRecord() {
+
+    if (!currentRecord) return;
+
+    const ids = [
+        "fullName",
+        "course",
+        "fin",
+        "passport",
+        "email",
+        "contact",
+        "applicationSource",
+        "agentName",
+        "marketingStaff",
+        "applicationDate",
+        "applicationTime",
+        "applicationRemarks",
+
+        "docPassport",
+        "docPhoto",
+        "docEducation",
+        "docTranscript",
+        "docApplication",
+
+        "eligibilityStatus",
+        "eligibilityDate",
+        "writtenOffer",
+        "writtenOfferDate",
+        "eligibilityRemarks",
+
+        "applicationFeeStatus",
+        "applicationFeeAmount",
+        "applicationFeeDate",
+        "applicationFeeReference",
+        "applicationFeeVerifiedBy",
+
+        "studentID",
+        "studentIDDate",
+        "studentIDCreatedBy",
+
+        "intake",
+        "intakeDate",
+        "offerLetterStatus",
+        "offerLetterDate",
+        "contractStatus",
+        "contractSignedDate",
+        "contractReference",
+
+        "solarNumber",
+        "solarCreatedDate",
+        "solarCreatedBy",
+
+        "eformRequired",
+        "eformStatus",
+        "eformSubmittedDate",
+        "eformOwner",
+
+        "processingFeeStatus",
+        "processingFeeDate",
+        "processingFeeReference",
+        "processingFeeVerifiedBy",
+
+        "icaStatus",
+        "icaStatusDate",
+        "icaUpdatedBy",
+        "icaRemarks",
+
+        "ipaStatus",
+        "ipaApprovalDate",
+
+        "firstCourseFeeStatus",
+        "firstCourseFeeAmount",
+        "firstCourseFeeDate",
+        "firstCourseFeeReference",
+
+        "issuanceFeeStatus",
+        "issuanceFeeDate",
+        "issuanceFeeReference"
+    ];
+
+    ids.forEach(id => {
+
+        const element = document.getElementById(id);
+
+        if (element) {
+            currentRecord[id] = element.value;
+        }
+
+    });
+
+currentRecord.lastUpdated =
+    new Date().toLocaleString();
+
+persistRecord();
+
+// Send/update the same record in Excel through Power Automate
+sendToPowerAutomate();
+
+updateHeader();
+}
+
+
+/* =========================================================
+   PERSIST RECORD
+========================================================= */
+
+function persistRecord() {
+
+    let records = getRecords();
+
+    const index =
+        records.findIndex(
+            record =>
+                record.recordID === currentRecord.recordID
+        );
+
+    if (index >= 0) {
+        records[index] = currentRecord;
+    } else {
+        records.push(currentRecord);
+    }
+
+    saveRecords(records);
+}
+
+/* =========================================================
+   POWER AUTOMATE / EXCEL
+========================================================= */
+
+// IMPORTANT:
+// Paste your NEW Power Automate HTTP URL below.
+// Do not use the old URL that was previously exposed.
+const POWER_AUTOMATE_URL =
+    "https://defaultb5bf14ec5d20428a93a3cd478f4985.02.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/17/workflows/25aef2dddc15450e9067a65f8d2fe00f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uYgHCmbZOP54dQ03invp19qEHzGoA2jjpMLOkGq_j0s";
+
+
+function getDocumentStatus() {
+
+    const documents = [
+        currentRecord.docPassport,
+        currentRecord.docPhoto,
+        currentRecord.docEducation,
+        currentRecord.docTranscript,
+        currentRecord.docApplication
+    ];
+
+    if (documents.every(value =>
+        value === "Received" || value === "N/A"
+    )) {
+        return "Complete";
+    }
+
+    if (documents.some(value => value === "Received")) {
+        return "Partially Received";
+    }
+
+    return "Pending";
+}
+
+
+function getCurrentMilestoneName() {
+
+    if (!currentRecord || !currentRecord.milestones) {
+        return "Application Received";
+    }
+
+    const names = {
+        1: "Application",
+        2: "Documents & Eligibility",
+        3: "Application Fee",
+        4: "Student Profile",
+        5: "Intake & Contract",
+        6: "SOLAR",
+        7: "e-Form",
+        8: "ICA Processing Fee",
+        9: "ICA / SOLAR Status",
+        10: "IPA & Pre-Reporting"
+    };
+
+    const number = getCurrentMilestoneNumber();
+
+    return names[number] || "Application";
+}
+
+
+function getAdmissionRemarks() {
+
+    const remarks = [];
+
+    if (currentRecord.applicationRemarks) {
+        remarks.push(
+            "Application: " +
+            currentRecord.applicationRemarks
+        );
+    }
+
+    if (currentRecord.eligibilityRemarks) {
+        remarks.push(
+            "Eligibility: " +
+            currentRecord.eligibilityRemarks
+        );
+    }
+
+    if (currentRecord.icaRemarks) {
+        remarks.push(
+            "ICA/SOLAR: " +
+            currentRecord.icaRemarks
+        );
+    }
+
+    return remarks.join(" | ");
+}
+
+function buildPowerAutomatePayload() {
+
+    const now = new Date();
+
+    return {
+
+        RecordID:
+            currentRecord.recordID || "",
+
+        FullName:
+            currentRecord.fullName || "",
+
+        Course:
+            currentRecord.course || "",
+
+        FIN_NRIC:
+            currentRecord.fin || "",
+
+        PassportNumber:
+            currentRecord.passport || "",
+
+        MarketingStaff:
+            currentRecord.marketingStaff || "",
+
+        ApplicationSource:
+            currentRecord.applicationSource || "",
+
+        AgentName:
+            currentRecord.agentName || "",
+
+        ApplicationReceivedDate:
+            currentRecord.applicationDate || "",
+
+        ApplicationReceivedTime:
+            currentRecord.applicationTime || "",
+
+        Email:
+            currentRecord.email || "",
+
+        ContactNumber:
+            currentRecord.contact || "",
+
+        DocumentStatus:
+            getDocumentStatus(),
+
+        EligibilityStatus:
+            currentRecord.eligibilityStatus || "",
+
+        EligibilityDecisionDate:
+            currentRecord.eligibilityDate || "",
+
+        WrittenOfferIssued:
+            currentRecord.writtenOffer || "",
+
+        WrittenOfferDate:
+            currentRecord.writtenOfferDate || "",
+
+        ApplicationFeeStatus:
+            currentRecord.applicationFeeStatus || "",
+
+        ApplicationFeeReference:
+            currentRecord.applicationFeeReference || "",
+
+        ApplicationFeeVerifiedBy:
+            currentRecord.applicationFeeVerifiedBy || "",
+
+        StudentID:
+            currentRecord.studentID || "",
+
+        StudentIDCreatedDate:
+            currentRecord.studentIDDate || "",
+
+        StudentIDCreatedBy:
+            currentRecord.studentIDCreatedBy || "",
+
+        Intake:
+            currentRecord.intake || "",
+
+        IntakeCreatedDate:
+            currentRecord.intakeDate || "",
+
+        OfferLetterStatus:
+            currentRecord.offerLetterStatus || "",
+
+        OfferLetterSentDate:
+            currentRecord.offerLetterDate || "",
+
+        ContractStatus:
+            currentRecord.contractStatus || "",
+
+        ContractSignedDate:
+            currentRecord.contractSignedDate || "",
+
+        ContractReference:
+            currentRecord.contractReference || "",
+
+        SOLARNumber:
+            currentRecord.solarNumber || "",
+
+        SOLARCreatedDate:
+            currentRecord.solarCreatedDate || "",
+
+        SOLARCreatedBy:
+            currentRecord.solarCreatedBy || "",
+
+        EFormRequired:
+            currentRecord.eformRequired || "",
+
+        EFormStatus:
+            currentRecord.eformStatus || "",
+
+        EFormSubmittedDate:
+            currentRecord.eformSubmittedDate || "",
+
+        EFormFollowUpOwner:
+            currentRecord.eformOwner || "",
+
+        ProcessingFeeStatus:
+            currentRecord.processingFeeStatus || "",
+
+        ProcessingFeeDate:
+            currentRecord.processingFeeDate || "",
+
+        ProcessingFeeReference:
+            currentRecord.processingFeeReference || "",
+
+        ProcessingFeeVerifiedBy:
+            currentRecord.processingFeeVerifiedBy || "",
+
+        CurrentSOLARICAStatus:
+            currentRecord.icaStatus || "",
+
+        CurrentStatusDate:
+            currentRecord.icaStatusDate || "",
+
+        IPAStatus:
+            currentRecord.ipaStatus || "",
+
+        IPAApprovalDate:
+            currentRecord.ipaApprovalDate || "",
+
+        FirstCourseFeeStatus:
+            currentRecord.firstCourseFeeStatus || "",
+
+        FirstCourseFeeReference:
+            currentRecord.firstCourseFeeReference || "",
+
+        IssuanceFeeStatus:
+            currentRecord.issuanceFeeStatus || "",
+
+        IssuanceFeeDate:
+            currentRecord.issuanceFeeDate || "",
+
+        IssuanceFeeReference:
+            currentRecord.issuanceFeeReference || "",
+
+        CurrentMilestone:
+            getCurrentMilestoneName(),
+
+        OverallAdmissionStatus:
+            currentRecord.overallStatus || "Active",
+
+        LastUpdatedBy:
+            currentRecord.icaUpdatedBy ||
+            currentRecord.marketingStaff ||
+            "Academic Support",
+
+        LastUpdatedOn:
+            now.toISOString(),
+
+        AdmissionRemarks:
+            getAdmissionRemarks()
+    };
+}
+
+
+async function sendToPowerAutomate() {
+
+    if (!currentRecord) {
+        return false;
+    }
+
+    if (
+        !POWER_AUTOMATE_URL ||
+        POWER_AUTOMATE_URL ===
+        "PASTE_YOUR_NEW_POWER_AUTOMATE_URL_HERE"
+    ) {
+
+        console.warn(
+            "Power Automate URL has not been configured."
+        );
+
+        return false;
+    }
+
+    const payload =
+        buildPowerAutomatePayload();
+
+    console.log(
+        "Sending to Power Automate:",
+        payload
+    );
+
+    try {
+
+        const response =
+            await fetch(
+                POWER_AUTOMATE_URL,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(payload)
+                }
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Power Automate returned HTTP " +
+                response.status
+            );
+        }
+
+        console.log(
+            "Successfully sent record:",
+            payload.RecordID
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Power Automate error:",
+            error
+        );
+
+        alert(
+            "The admission record was saved locally, " +
+            "but Excel could not be updated.\n\n" +
+            "Please check the Power Automate flow."
+        );
+
+        return false;
+    }
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function searchStudents() {
+
+    const search =
+        document.getElementById("searchInput")
+            .value
+            .toLowerCase()
+            .trim();
+
+    const records = getRecords();
+
+    const results =
+        records.filter(record => {
+
+            const text = [
+                record.studentID,
+                record.fullName,
+                record.fin,
+                record.passport,
+                record.solarNumber,
+                record.course,
+                record.agentName,
+                record.icaStatus,
+                record.overallStatus
+            ]
+            .join(" ")
+            .toLowerCase();
+
+            return text.includes(search);
+        });
+
+    const container =
+        document.getElementById("searchResults");
+
+    container.innerHTML = "";
+
+    if (results.length === 0) {
+
+        container.innerHTML =
+            "<p>No admission records found.</p>";
+
+        return;
+    }
+
+    results.forEach(record => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "student-result";
+
+        div.innerHTML = `
+            <strong>
+                ${record.studentID || "No ACEID Yet"}
+                |
+                ${record.fullName || "Unnamed Student"}
+            </strong>
+
+            <br><br>
+
+            Course:
+            ${record.course || "-"}
+
+            &nbsp; | &nbsp;
+
+            Source:
+            ${record.applicationSource || "-"}
+
+            &nbsp; | &nbsp;
+
+            SOLAR:
+            ${record.solarNumber || "-"}
+
+            <br>
+
+            Status:
+            ${record.icaStatus || record.overallStatus || "Active"}
+
+            &nbsp; | &nbsp;
+
+            Last Updated:
+            ${record.lastUpdated || "-"}
+        `;
+
+        div.onclick = function() {
+            loadStudent(record.recordID);
+        };
+
+        container.appendChild(div);
+    });
+}
+
+
+/* =========================================================
+   LOAD STUDENT
+========================================================= */
+
+function loadStudent(recordID) {
+
+    const records = getRecords();
+
+    currentRecord =
+        records.find(
+            record =>
+                record.recordID === recordID
+        );
+
+    if (!currentRecord) {
+        alert("Student record could not be found.");
+        return;
+    }
+
+    populateForm();
+
+    hideAllScreens();
+
+    document.getElementById("studentRecord")
+        .classList.remove("hidden");
+
+    updateHeader();
+    updateMilestones();
+
+    const current =
+        getCurrentMilestoneNumber();
+
+    openMilestone(current);
+}
+
+
+/* =========================================================
+   POPULATE FORM
+========================================================= */
+
+function populateForm() {
+
+    Object.keys(currentRecord).forEach(key => {
+
+        const element =
+            document.getElementById(key);
+
+        if (
+            element &&
+            typeof currentRecord[key] !== "object"
+        ) {
+
+            element.value =
+                currentRecord[key] || "";
+        }
+
+    });
+
+    sourceChanged();
+    eformChanged();
+    ipaChanged();
+}
+
+
+/* =========================================================
+   CLEAR FORM
+========================================================= */
+
+function clearForm() {
+
+    document.querySelectorAll(
+        "#studentRecord input, #studentRecord textarea"
+    )
+    .forEach(element => {
+
+        if (element.type !== "button") {
+            element.value = "";
+        }
+
+    });
+
+    document.querySelectorAll(
+        "#studentRecord select"
+    )
+    .forEach(select => {
+        select.selectedIndex = 0;
+    });
+
+    document.getElementById("applicationFeeAmount").value = "109";
+
+    sourceChanged();
+    eformChanged();
+    ipaChanged();
+}
+
+
+/* =========================================================
+   CURRENT MILESTONE
+========================================================= */
+
+function getCurrentMilestoneNumber() {
+
+    for (let i = 1; i <= 10; i++) {
+
+        if (
+            currentRecord.milestones[i] === "Current / Pending"
+        ) {
+
+            return i;
+        }
+    }
+
+    return 10;
+}
+
+
+/* =========================================================
+   UPDATE HEADER
+========================================================= */
+
+function updateHeader() {
+
+    if (!currentRecord) return;
+
+    document.getElementById("headerStudentID")
+        .textContent =
+        currentRecord.studentID || "Not Created";
+
+    document.getElementById("headerName")
+        .textContent =
+        currentRecord.fullName || "-";
+
+    document.getElementById("headerIdentification")
+        .textContent =
+        currentRecord.fin ||
+        currentRecord.passport ||
+        "-";
+
+    document.getElementById("headerCourse")
+        .textContent =
+        currentRecord.course || "-";
+
+    document.getElementById("headerSource")
+        .textContent =
+        currentRecord.applicationSource === "Agent"
+            ? "Agent - " +
+              (currentRecord.agentName || "")
+            : currentRecord.applicationSource || "-";
+
+    document.getElementById("headerSolar")
+        .textContent =
+        currentRecord.solarNumber || "Not Created";
+
+    const milestone =
+        getCurrentMilestoneNumber();
+
+    document.getElementById("headerMilestone")
+        .textContent =
+        "Milestone " + milestone;
+
+    document.getElementById("headerOverallStatus")
+        .textContent =
+        currentRecord.overallStatus || "Active";
+}
+
+
+/* =========================================================
+   UPDATE MILESTONE DISPLAY
+========================================================= */
+
+function updateMilestones() {
+
+    if (!currentRecord) return;
+
+    for (let i = 1; i <= 10; i++) {
+
+        const element =
+            document.getElementById("status" + i);
+
+        let status =
+            currentRecord.milestones[i] ||
+            "Not Started";
+
+        element.textContent = status;
+
+        element.className = "status";
+
+        if (status === "Complete") {
+            element.classList.add("status-complete");
+        }
+
+        else if (status === "Current / Pending") {
+            element.classList.add("status-pending");
+        }
+
+        else if (status === "Blocked") {
+            element.classList.add("status-blocked");
+        }
+
+        else if (status === "Closed") {
+            element.classList.add("status-closed");
+        }
+
+        else {
+            element.classList.add("status-not-started");
+        }
+    }
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+function addHistory(
+    milestone,
+    previousStatus,
+    newStatus,
+    remarks
+) {
+
+    if (!currentRecord.history) {
+        currentRecord.history = [];
+    }
+
+    currentRecord.history.push({
+
+        dateTime:
+            new Date().toLocaleString(),
+
+        milestone:
+            milestone,
+
+        previousStatus:
+            previousStatus,
+
+        newStatus:
+            newStatus,
+
+        updatedBy:
+            document.getElementById("icaUpdatedBy")
+                ?.value || "",
+
+        remarks:
+            remarks || ""
+
+    });
+}
+
+
+/* =========================================================
+   TIMELINE
+========================================================= */
+
+function showTimeline() {
+
+    document.querySelectorAll(".milestone-section")
+        .forEach(section =>
+            section.classList.add("hidden")
+        );
+
+    const timeline =
+        document.getElementById("timelineSection");
+
+    timeline.classList.remove("hidden");
+
+    const body =
+        document.getElementById("timelineBody");
+
+    body.innerHTML = "";
+
+    const history =
+        currentRecord.history || [];
+
+    if (history.length === 0) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="6">
+                    No timeline history recorded yet.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    history.forEach(item => {
+
+        const row =
+            document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${item.dateTime || "-"}</td>
+            <td>${item.milestone || "-"}</td>
+            <td>${item.previousStatus || "-"}</td>
+            <td>${item.newStatus || "-"}</td>
+            <td>${item.updatedBy || "-"}</td>
+            <td>${item.remarks || "-"}</td>
+        `;
+
+        body.appendChild(row);
+    });
+
+    timeline.scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+
+function hideTimeline() {
+
+    document.getElementById("timelineSection")
+        .classList.add("hidden");
+
+    openMilestone(
+        getCurrentMilestoneNumber()
+    );
+}
+
+
+/* =========================================================
+   INITIAL PAGE
+========================================================= */
+
+goDashboard();
+
+</script>
+
+</body>
+</html>
